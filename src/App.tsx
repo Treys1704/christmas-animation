@@ -2,83 +2,89 @@ import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Loader } from './components/Loader';
 import { Snowfall } from './components/Snowfall';
-import { Gift, TreePine, Sparkles } from 'lucide-react';
+import { Background } from './components/Background';
+import { StarField } from './components/StarField';
+import { ChristmasText } from './components/ChristmasText';
+import { Gift, TreePine, Sparkles, Music, Heart } from 'lucide-react';
 
 function App() {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        setTimeout(() => setIsLoading(false), 2000);
+        const timer = setTimeout(() => setIsLoading(false), 2000);
+        return () => clearTimeout(timer);
     }, []);
 
+    const icons = [
+        { Icon: Gift, color: "text-red-400" },
+        { Icon: Sparkles, color: "text-yellow-400" },
+        { Icon: Music, color: "text-purple-400" },
+        { Icon: Heart, color: "text-pink-400" }
+    ];
+
     return (
-        <div className="min-h-screen bg-gradient-to-b from-blue-900 to-blue-700 relative overflow-hidden">
+        <div className="min-h-screen relative overflow-hidden">
+            <Background />
+            <StarField />
             <Snowfall />
 
-            <AnimatePresence mode={"wait"}>
+            <AnimatePresence mode="wait">
                 {isLoading ? (
                     <motion.div
+                        key="loader"
                         className="min-h-screen flex items-center justify-center"
-                        exit={{ opacity: 0 }}
+                        exit={{ opacity: 0, scale: 0.9 }}
+                        transition={{ duration: 0.5 }}
                     >
                         <Loader />
                     </motion.div>
                 ) : (
                     <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8 }}
-                        className="min-h-screen flex flex-col items-center justify-center px-4"
+                        key="content"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 1 }}
+                        className="min-h-screen flex flex-col items-center justify-center px-4 py-12 relative z-10"
                     >
                         <motion.div
                             animate={{
                                 y: [0, -10, 0],
                             }}
                             transition={{
-                                duration: 2,
+                                duration: 3,
                                 repeat: Infinity,
                                 ease: "easeInOut"
                             }}
-                            className="mb-8"
+                            className="mb-12"
                         >
-                            <TreePine size={64} className="text-green-400" />
+                            <TreePine size={80} className="text-green-400" />
                         </motion.div>
 
-                        <motion.h1
-                            className="text-5xl md:text-7xl font-bold text-white text-center mb-8"
-                            initial={{ scale: 0.5 }}
-                            animate={{ scale: 1 }}
-                            transition={{
-                                type: "spring",
-                                stiffness: 260,
-                                damping: 20
-                            }}
-                        >
-                            Joyeux Noël !
-                        </motion.h1>
+                        <ChristmasText />
 
                         <motion.div
-                            className="flex gap-6 mb-12"
+                            className="flex gap-8 mb-16"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             transition={{ delay: 0.5 }}
                         >
-                            <motion.div
-                                whileHover={{ scale: 1.1, rotate: 10 }}
-                                className="text-red-400"
-                            >
-                                <Gift size={32} />
-                            </motion.div>
-                            <motion.div
-                                whileHover={{ scale: 1.1, rotate: -10 }}
-                                className="text-yellow-400"
-                            >
-                                <Sparkles size={32} />
-                            </motion.div>
+                            {icons.map(({ Icon, color }, index) => (
+                                <motion.div
+                                    key={index}
+                                    whileHover={{
+                                        scale: 1.1,
+                                        rotate: 10,
+                                        transition: { duration: 0.3 }
+                                    }}
+                                    className={color}
+                                >
+                                    <Icon size={36} />
+                                </motion.div>
+                            ))}
                         </motion.div>
 
                         <motion.p
-                            className="text-xl text-white text-center max-w-md"
+                            className="text-2xl text-white text-center max-w-2xl leading-relaxed"
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.8 }}
